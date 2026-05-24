@@ -1,0 +1,6 @@
+/.metadata/
+*.exe
+*.jar
+*.rar
+RemoteSystemsTempFiles/
+.metadata/
