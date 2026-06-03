@@ -1,6 +1,7 @@
 package utilidades.modulos.almatallada.disenios;
 
 import javax.swing.*;
+import javax.swing.border.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
@@ -14,10 +15,6 @@ import java.awt.datatransfer.*;
 
 public class DiseniosPanel extends JPanel {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
 	// ── Colores ────────────────────────────────────────────────────────────
 	static final Color BG = new Color(245, 245, 247);
 	static final Color BG_CARD = new Color(255, 255, 255);
@@ -224,12 +221,16 @@ public class DiseniosPanel extends JPanel {
 		Arrays.sort(archivos, Comparator.comparing(File::getName, String.CASE_INSENSITIVE_ORDER));
 
 		for (File f : archivos) {
-			if (!f.isFile())
-				continue;
+			if (!f.isFile()) continue;
 			String ex = ext(f.getName());
-			if (!esReconocida(ex))
-				continue;
-			String base = nombreBase(f.getName());
+			if (!esReconocida(ex)) continue;
+
+			// Si el archivo tiene agrupación manual guardada, usarla
+			String grupoManual = meta.getProperty("grp|" + f.getName());
+			String base = (grupoManual != null && !grupoManual.isBlank())
+				? grupoManual
+				: nombreBase(f.getName());
+
 			grupos.computeIfAbsent(base, k -> new Grupo(k, leerEtiquetas(k))).agregar(f, ex);
 		}
 
@@ -736,6 +737,17 @@ public class DiseniosPanel extends JPanel {
 			}
 		});
 		panelDetalle.add(lblGestionar);
+		panelDetalle.add(Box.createVerticalStrut(6));
+
+		// Boton agrupar manualmente
+		JLabel lblAgrupar = crearLabelBtnSecundario("⇄ Agrupar con...");
+		lblAgrupar.setAlignmentX(LEFT_ALIGNMENT);
+		lblAgrupar.addMouseListener(new MouseAdapter() {
+			public void mouseClicked(MouseEvent e) {
+				mostrarDialogoAgrupar(g);
+			}
+		});
+		panelDetalle.add(lblAgrupar);
 		panelDetalle.add(Box.createVerticalStrut(10));
 
 		// Campo para crear nueva etiqueta
@@ -837,7 +849,7 @@ public class DiseniosPanel extends JPanel {
 	// ── Fila de archivo ────────────────────────────────────────────────────
 	JPanel filaArchivo(File f) {
 		JPanel row = new JPanel(new BorderLayout(8, 0));
-		row.setBackground(new Color(250, 250, 252));
+		row.setBackground(new Color(90, 90, 98));
 		row.setOpaque(true);
 		row.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(BORDER_LT),
 				BorderFactory.createEmptyBorder(7, 10, 7, 10)));
@@ -890,7 +902,7 @@ public class DiseniosPanel extends JPanel {
 			}
 
 			public void mouseExited(MouseEvent e) {
-				row.setBackground(new Color(250, 250, 252));
+				row.setBackground(new Color(90, 90, 98));
 			}
 		});
 
@@ -979,10 +991,27 @@ public class DiseniosPanel extends JPanel {
 		try {
 			Desktop.getDesktop().open(f);
 		} catch (IOException ex) {
-			JOptionPane.showMessageDialog(this,
-					"No se pudo abrir el archivo.\nVerifica que tengas un programa asociado para ." + ext(f.getName())
-							+ "\n\n" + ex.getMessage(),
-					"Error", JOptionPane.ERROR_MESSAGE);
+			// Sin asociación — ofrecer elegir programa manualmente
+			int opt = JOptionPane.showConfirmDialog(this,
+					"<html>No hay programa asociado para <b>." + ext(f.getName()) + "</b><br><br>"
+							+ "¿Deseas elegir un programa para abrirlo?</html>",
+					"Abrir con...", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+			if (opt != JOptionPane.YES_OPTION)
+				return;
+
+			JFileChooser fc = new JFileChooser();
+			fc.setDialogTitle("Selecciona el programa para abrir ." + ext(f.getName()));
+			fc.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter("Ejecutables", "exe"));
+			fc.setCurrentDirectory(new File("C:\\Program Files"));
+			if (fc.showOpenDialog(this) != JFileChooser.APPROVE_OPTION)
+				return;
+
+			try {
+				new ProcessBuilder(fc.getSelectedFile().getAbsolutePath(), f.getAbsolutePath()).start();
+			} catch (IOException ex2) {
+				JOptionPane.showMessageDialog(this, "No se pudo abrir el archivo:\n" + ex2.getMessage(), "Error",
+						JOptionPane.ERROR_MESSAGE);
+			}
 		}
 	}
 
@@ -1004,9 +1033,12 @@ public class DiseniosPanel extends JPanel {
 	void guardarConfig() {
 		meta.setProperty("carpeta", carpetaActual != null ? carpetaActual.getAbsolutePath() : "");
 		meta.setProperty("etiquetas", String.join("|", etiquetas));
-		// Guardar etiquetas de todos los grupos cargados
-		for (Grupo g : grupos.values())
+		// Guardar etiquetas y asignación archivo→grupo de todos los grupos
+		for (Grupo g : grupos.values()) {
 			escribirEtiquetas(g);
+			for (File f : g.archivos)
+				meta.setProperty("grp|" + f.getName(), g.nombre);
+		}
 		try (FileOutputStream o = new FileOutputStream(CONFIG)) {
 			meta.store(o, "Alma Tallada Disenios");
 		} catch (IOException ex) {
@@ -1072,7 +1104,7 @@ public class DiseniosPanel extends JPanel {
 		l.setFont(new Font("SansSerif", Font.BOLD, 9));
 		l.setForeground(TEXT_HINT);
 		l.setOpaque(true);
-		l.setBackground(new Color(248, 248, 250));
+		l.setBackground(new Color(90, 90, 98));
 		l.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(BORDER),
 				BorderFactory.createEmptyBorder(1, 4, 1, 4)));
 		return l;
@@ -1109,6 +1141,203 @@ public class DiseniosPanel extends JPanel {
 		l.setFont(new Font("SansSerif", Font.PLAIN, 12));
 		l.setForeground(TEXT_SEC);
 		return l;
+	}
+
+	// Label botón secundario (gris)
+	JLabel crearLabelBtnSecundario(String txt) {
+		JLabel l = new JLabel(txt);
+		l.setFont(new Font("SansSerif", Font.BOLD, 11));
+		l.setForeground(new Color(20, 20, 20));
+		l.setOpaque(true);
+		l.setBackground(new Color(235, 235, 240));
+		l.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(new Color(190, 190, 195)),
+				BorderFactory.createEmptyBorder(6, 14, 6, 14)));
+		l.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		l.addMouseListener(new MouseAdapter() {
+			public void mouseEntered(MouseEvent e) {
+				l.setBackground(new Color(215, 215, 220));
+			}
+
+			public void mouseExited(MouseEvent e) {
+				l.setBackground(new Color(235, 235, 240));
+			}
+		});
+		return l;
+	}
+
+	// ── Diálogo para agrupar manualmente ──────────────────────────────────
+	void mostrarDialogoAgrupar(Grupo origen) {
+		List<String> opciones = new ArrayList<>();
+		for (String nombre : grupos.keySet())
+			if (!nombre.equals(origen.nombre)) opciones.add(nombre);
+
+		if (opciones.isEmpty()) {
+			JOptionPane.showMessageDialog(this, "No hay otros grupos para agrupar.", "Sin opciones",
+				JOptionPane.INFORMATION_MESSAGE);
+			return;
+		}
+
+		JDialog dlg = new JDialog((Frame) SwingUtilities.getWindowAncestor(this),
+			"Agrupar \"" + origen.nombre + "\" con...", true);
+		dlg.setLayout(new BorderLayout(8, 8));
+		dlg.setSize(460, 480);
+		dlg.setLocationRelativeTo(this);
+
+		JPanel content = new JPanel(new BorderLayout(8, 8));
+		content.setBorder(BorderFactory.createEmptyBorder(14, 14, 10, 14));
+		content.setBackground(BG_CARD);
+
+		// Info
+		JLabel info = new JLabel("<html>Fusionar <b>" + origen.nombre + "</b> con los grupos seleccionados:</html>");
+		info.setFont(new Font("SansSerif", Font.PLAIN, 12));
+		info.setForeground(TEXT);
+
+		// Buscador
+		JTextField tfBuscar = new JTextField();
+		tfBuscar.setFont(new Font("SansSerif", Font.PLAIN, 12));
+		tfBuscar.setBackground(BG_INPUT);
+		tfBuscar.setForeground(TEXT);
+		tfBuscar.setCaretColor(TEXT);
+		tfBuscar.setBorder(BorderFactory.createCompoundBorder(
+			BorderFactory.createLineBorder(BORDER_LT),
+			BorderFactory.createEmptyBorder(5, 8, 5, 8)));
+		tfBuscar.putClientProperty("JTextField.placeholderText", "Buscar...");
+
+		JPanel topPanel = new JPanel(new BorderLayout(0, 6));
+		topPanel.setBackground(BG_CARD);
+		topPanel.add(info,     BorderLayout.NORTH);
+		topPanel.add(tfBuscar, BorderLayout.SOUTH);
+
+		// Panel de checkboxes con scroll
+		JPanel checkPanel = new JPanel();
+		checkPanel.setLayout(new BoxLayout(checkPanel, BoxLayout.Y_AXIS));
+		checkPanel.setBackground(BG_INPUT);
+
+		List<JCheckBox> checks = new ArrayList<>();
+		for (String op : opciones) {
+			JCheckBox cb = new JCheckBox(op);
+			cb.setFont(new Font("SansSerif", Font.PLAIN, 13));
+			cb.setForeground(TEXT);
+			cb.setBackground(BG_INPUT);
+			cb.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
+			cb.setFocusPainted(false);
+			cb.addItemListener(e -> actualizarNombreFusion(origen.nombre, checks, tfBuscar));
+			checks.add(cb);
+			checkPanel.add(cb);
+		}
+
+		JScrollPane scrollChecks = new JScrollPane(checkPanel);
+		scrollChecks.getViewport().setBackground(BG_INPUT);
+		scrollChecks.setBorder(BorderFactory.createLineBorder(BORDER_LT));
+
+		// Filtrar checkboxes mientras escribe
+		tfBuscar.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
+			void update() {
+				String q = tfBuscar.getText().toLowerCase();
+				checkPanel.removeAll();
+				for (JCheckBox cb : checks) {
+					if (q.isBlank() || cb.getText().toLowerCase().contains(q))
+						checkPanel.add(cb);
+				}
+				checkPanel.revalidate();
+				checkPanel.repaint();
+			}
+			public void insertUpdate(javax.swing.event.DocumentEvent e)  { update(); }
+			public void removeUpdate(javax.swing.event.DocumentEvent e)  { update(); }
+			public void changedUpdate(javax.swing.event.DocumentEvent e) { update(); }
+		});
+
+		// Nombre del grupo resultante
+		JPanel nombrePanel = new JPanel(new BorderLayout(6, 0));
+		nombrePanel.setBackground(BG_CARD);
+		JLabel lblNombre = new JLabel("Nombre resultado:");
+		lblNombre.setFont(new Font("SansSerif", Font.PLAIN, 12));
+		lblNombre.setForeground(TEXT);
+		JTextField tfNombre = new JTextField(origen.nombre);
+		tfNombre.setFont(new Font("SansSerif", Font.PLAIN, 12));
+		tfNombre.setBackground(BG_INPUT);
+		tfNombre.setForeground(TEXT);
+		tfNombre.setCaretColor(TEXT);
+		tfNombre.setBorder(BorderFactory.createCompoundBorder(
+			BorderFactory.createLineBorder(BORDER_LT),
+			BorderFactory.createEmptyBorder(4, 8, 4, 8)));
+		nombrePanel.add(lblNombre, BorderLayout.WEST);
+		nombrePanel.add(tfNombre, BorderLayout.CENTER);
+
+		// Guardar ref a tfNombre para el listener de checks
+		checks.forEach(cb -> cb.addItemListener(e -> {
+			List<String> sel = new ArrayList<>();
+			sel.add(origen.nombre);
+			for (JCheckBox c : checks) if (c.isSelected()) sel.add(c.getText());
+			if (sel.size() > 1) tfNombre.setText(String.join(" + ", sel));
+			else tfNombre.setText(origen.nombre);
+		}));
+
+		JPanel south = new JPanel(new BorderLayout(0, 8));
+		south.setBackground(BG_CARD);
+		south.add(nombrePanel, BorderLayout.NORTH);
+
+		// Botones
+		JPanel bots = new JPanel(new FlowLayout(FlowLayout.RIGHT, 8, 0));
+		bots.setBackground(BG_CARD);
+		JLabel btnCancelar = crearLabelBtnSecundario("Cancelar");
+		JLabel btnAgrupar  = crearLabelBtn("Agrupar seleccionados");
+		bots.add(btnCancelar);
+		bots.add(btnAgrupar);
+		south.add(bots, BorderLayout.SOUTH);
+
+		btnCancelar.addMouseListener(new MouseAdapter() {
+			public void mouseClicked(MouseEvent e) { dlg.dispose(); }
+		});
+
+		btnAgrupar.addMouseListener(new MouseAdapter() {
+			public void mouseClicked(MouseEvent e) {
+				List<String> seleccionados = new ArrayList<>();
+				for (JCheckBox cb : checks) if (cb.isSelected()) seleccionados.add(cb.getText());
+
+				if (seleccionados.isEmpty()) {
+					JOptionPane.showMessageDialog(dlg, "Selecciona al menos un grupo.");
+					return;
+				}
+
+				String nuevoNombre = tfNombre.getText().trim();
+				if (nuevoNombre.isBlank()) nuevoNombre = origen.nombre;
+
+				// Construir grupo fusionado
+				Grupo fusion = new Grupo(nuevoNombre, new LinkedHashSet<>());
+				fusion.etiquetas.addAll(origen.etiquetas);
+				for (File f : origen.archivos) fusion.agregar(f, ext(f.getName()));
+
+				for (String dest : seleccionados) {
+					Grupo gDest = grupos.get(dest);
+					if (gDest == null) continue;
+					fusion.etiquetas.addAll(gDest.etiquetas);
+					for (File f : gDest.archivos) fusion.agregar(f, ext(f.getName()));
+					grupos.remove(dest);
+					meta.remove("etq|" + dest);
+				}
+
+				grupos.remove(origen.nombre);
+				meta.remove("etq|" + origen.nombre);
+				grupos.put(nuevoNombre, fusion);
+				escribirEtiquetas(fusion);
+				guardarConfig();
+				filtrar();
+				dlg.dispose();
+				mostrarDetalle(fusion);
+			}
+		});
+
+		content.add(topPanel,     BorderLayout.NORTH);
+		content.add(scrollChecks, BorderLayout.CENTER);
+		content.add(south,        BorderLayout.SOUTH);
+
+		dlg.add(content);
+		dlg.setVisible(true);
+	}
+
+	void actualizarNombreFusion(String base, List<JCheckBox> checks, JTextField tfNombre) {
+		// helper vacío — la actualización la hacen los ItemListeners directamente
 	}
 
 	// Label que actúa como botón (más confiable que JButton con Metal L&F)
@@ -1159,11 +1388,6 @@ public class DiseniosPanel extends JPanel {
 
 	// ── WrapLayout ─────────────────────────────────────────────────────────
 	static class WrapLayout extends FlowLayout {
-		/**
-		 * 
-		 */
-		private static final long serialVersionUID = 1L;
-
 		WrapLayout(int align, int hgap, int vgap) {
 			super(align, hgap, vgap);
 		}

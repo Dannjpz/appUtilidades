@@ -1,0 +1,13 @@
+{
+  "ingresoMensual": 0.0,
+  "categorias": [
+    {"id":"f538fe5c8c","nombre":"Comida","color":"#FF6B6B","presupuesto":0.0},
+    {"id":"bd9003e4ff","nombre":"Transporte","color":"#FF9F43","presupuesto":0.0},
+    {"id":"8e7c4a380c","nombre":"Entretenimiento","color":"#FECA57","presupuesto":0.0},
+    {"id":"e08ae944f7","nombre":"Salud","color":"#1DD1A1","presupuesto":0.0},
+    {"id":"ff76eecfae","nombre":"Servicios","color":"#48DBFB","presupuesto":0.0},
+    {"id":"96a13fd2c4","nombre":"Otros","color":"#A29BFE","presupuesto":0.0}
+  ],
+  "gastos": [
+  ]
+}

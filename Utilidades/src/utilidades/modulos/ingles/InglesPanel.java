@@ -1,4 +1,4 @@
-package utilidades.modulos.contrasenas;
+package utilidades.modulos.ingles;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -15,7 +15,7 @@ import java.nio.file.*;
 import java.util.*;
 import java.util.List;
 
-public class ContrasenasPanel extends JPanel {
+public class InglesPanel extends JPanel {
 
 	private static final long serialVersionUID = 1L;
 
@@ -30,7 +30,7 @@ public class ContrasenasPanel extends JPanel {
 	private static final Color SEL_BG = new Color(210, 225, 255);
 	private static final Color DEL_RED = new Color(180, 45, 45);
 
-	private static final String DATA_DIR = "contrasenas";
+	private static final String DATA_DIR = "ingles";
 
 	// ── Estado ────────────────────────────────────────────────
 	private final List<Nota> notas = new ArrayList<>();
@@ -45,7 +45,7 @@ public class ContrasenasPanel extends JPanel {
 	private JPanel cardPanel;
 	private CardLayout cardLayout;
 
-	public ContrasenasPanel() {
+	public InglesPanel() {
 		setLayout(new BorderLayout());
 		setBackground(BG_APP);
 
@@ -98,7 +98,7 @@ public class ContrasenasPanel extends JPanel {
 		listaNota.setFont(new Font("SansSerif", Font.PLAIN, 13));
 		listaNota.setFixedCellHeight(40);
 		listaNota.setBorder(BorderFactory.createEmptyBorder(4, 0, 4, 0));
-		listaNota.setCellRenderer(new NotaRenderer());
+		listaNota.setCellRenderer(new InglesNotaRenderer());
 		listaNota.setSelectionBackground(SEL_BG);
 		listaNota.setSelectionForeground(TEXT_MAIN);
 
@@ -467,7 +467,7 @@ public class ContrasenasPanel extends JPanel {
 	}
 
 	// ── NOTA RENDERER ─────────────────────────────────────────
-	private static class NotaRenderer extends DefaultListCellRenderer {
+	private static class InglesNotaRenderer extends DefaultListCellRenderer {
 		private static final long serialVersionUID = 1L;
 
 		@Override

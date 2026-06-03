@@ -2,6 +2,8 @@ package utilidades;
 
 import utilidades.modulos.almatallada.AlmaTalladaPanel;
 import utilidades.modulos.contrasenas.ContrasenasPanel;
+import utilidades.modulos.finanzas.FinanzasPanel;
+import utilidades.modulos.ingles.InglesPanel;
 import utilidades.modulos.wow.WowPanel;
 
 import javax.swing.*;
@@ -43,7 +45,10 @@ public class MainFrame extends JFrame {
         WowPanel wowPanel = new WowPanel();
         tabs.addTab("⚔ WoW", wowPanel);
         tabs.addTab("💎 Alma Tallada", new AlmaTalladaPanel());
+        tabs.addTab("Inglés", new InglesPanel());
+        tabs.addTab("💰 Finanzas", new FinanzasPanel());
         tabs.addTab("🔑 Contraseñas",  new ContrasenasPanel());
+
         // Futuros módulos:
         // tabs.addTab("🎮 Otro juego", new OtroPanel());
 
