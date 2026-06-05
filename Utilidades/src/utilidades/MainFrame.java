@@ -4,6 +4,7 @@ import utilidades.modulos.almatallada.AlmaTalladaPanel;
 import utilidades.modulos.contrasenas.ContrasenasPanel;
 import utilidades.modulos.finanzas.FinanzasPanel;
 import utilidades.modulos.ingles.InglesPanel;
+import utilidades.modulos.vida.VidaPanel;
 import utilidades.modulos.wow.WowPanel;
 
 import javax.swing.*;
@@ -43,6 +44,7 @@ public class MainFrame extends JFrame {
         tabs.setFont(new Font("SansSerif", Font.BOLD, 13));
 
         WowPanel wowPanel = new WowPanel();
+        tabs.addTab("🎮 Vida", new VidaPanel());
         tabs.addTab("⚔ WoW", wowPanel);
         tabs.addTab("💎 Alma Tallada", new AlmaTalladaPanel());
         tabs.addTab("Inglés", new InglesPanel());

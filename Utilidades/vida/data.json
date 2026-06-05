@@ -1,0 +1,14 @@
+{
+  "personaje": {"nombre":"Dannjpz","hp":100,"hpMax":100},
+  "areas": [
+    {"id":"mental","nombre":"Mental","emoji":"🧠","colorHex":"#9664FF","xpTotal":0},
+    {"id":"espiritual","nombre":"Espiritual","emoji":"💫","colorHex":"#00D4CC","xpTotal":0},
+    {"id":"economico","nombre":"Económico","emoji":"💰","colorHex":"#FFB800","xpTotal":0},
+    {"id":"fisico","nombre":"Físico","emoji":"💪","colorHex":"#00CC66","xpTotal":0},
+    {"id":"social","nombre":"Social","emoji":"❤️","colorHex":"#FF4D6D","xpTotal":0}
+  ],
+  "misiones": [
+  ],
+  "habitos": [
+  ]
+}
