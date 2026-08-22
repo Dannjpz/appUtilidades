@@ -9,5 +9,8 @@
     {"id":"96a13fd2c4","nombre":"Otros","color":"#A29BFE","presupuesto":0.0}
   ],
   "gastos": [
+  ],
+  "tarjetas": [
+    {"id":"0553004a00","nombre":"BBVA","diaCorte":9,"diaLimitePago":29,"limiteCredito":0.0,"color":"#60A0FF"}
   ]
 }

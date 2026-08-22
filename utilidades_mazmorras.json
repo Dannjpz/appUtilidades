@@ -1,0 +1,107 @@
+{
+  "columnas": ["Conquista", "ICC 10N", "ICC 10H", "SR 25N", "ICC 25N", "SR 25H", "ICC 25H", "ARCHA 25N"],
+  "jugadores": [
+    {
+      "nombre": "tzss",
+      "faccion": "Alianza",
+      "nota": "",
+      "progreso": {"Conquista": false, "ICC 10N": false, "ICC 10H": false, "SR 25N": false, "ICC 25N": false, "SR 25H": false, "ICC 25H": false, "ARCHA 25N": false}
+    },
+    {
+      "nombre": "alinde",
+      "faccion": "Alianza",
+      "nota": "",
+      "progreso": {"Conquista": false, "ICC 10N": false, "ICC 10H": false, "SR 25N": false, "ICC 25N": false, "SR 25H": false, "ICC 25H": false, "ARCHA 25N": false}
+    },
+    {
+      "nombre": "baly",
+      "faccion": "Alianza",
+      "nota": "",
+      "progreso": {"Conquista": false, "ICC 10N": false, "ICC 10H": false, "SR 25N": false, "ICC 25N": false, "SR 25H": false, "ICC 25H": false, "ARCHA 25N": false}
+    },
+    {
+      "nombre": "hibernate",
+      "faccion": "Alianza",
+      "nota": "",
+      "progreso": {"Conquista": false, "ICC 10N": false, "ICC 10H": false, "SR 25N": false, "ICC 25N": false, "SR 25H": false, "ICC 25H": false, "ARCHA 25N": false}
+    },
+    {
+      "nombre": "Drummerh",
+      "faccion": "Alianza",
+      "nota": "",
+      "progreso": {"Conquista": false, "ICC 10N": false, "ICC 10H": false, "SR 25N": false, "ICC 25N": false, "SR 25H": false, "ICC 25H": false, "ARCHA 25N": false}
+    },
+    {
+      "nombre": "Lvesham",
+      "faccion": "Alianza",
+      "nota": "",
+      "progreso": {"Conquista": false, "ICC 10N": false, "ICC 10H": false, "SR 25N": false, "ICC 25N": false, "SR 25H": false, "ICC 25H": false, "ARCHA 25N": false}
+    },
+    {
+      "nombre": "Bubblegumqt",
+      "faccion": "Alianza",
+      "nota": "",
+      "progreso": {"Conquista": false, "ICC 10N": false, "ICC 10H": false, "SR 25N": false, "ICC 25N": false, "SR 25H": false, "ICC 25H": false, "ARCHA 25N": false}
+    },
+    {
+      "nombre": "lvdk",
+      "faccion": "Alianza",
+      "nota": "",
+      "progreso": {"Conquista": false, "ICC 10N": false, "ICC 10H": false, "SR 25N": false, "ICC 25N": false, "SR 25H": false, "ICC 25H": false, "ARCHA 25N": false}
+    },
+    {
+      "nombre": "imlove",
+      "faccion": "Alianza",
+      "nota": "",
+      "progreso": {"Conquista": false, "ICC 10N": false, "ICC 10H": false, "SR 25N": false, "ICC 25N": false, "SR 25H": false, "ICC 25H": false, "ARCHA 25N": false}
+    },
+    {
+      "nombre": "cashmoney",
+      "faccion": "Alianza",
+      "nota": "",
+      "progreso": {"Conquista": false, "ICC 10N": false, "ICC 10H": false, "SR 25N": false, "ICC 25N": false, "SR 25H": false, "ICC 25H": false, "ARCHA 25N": false}
+    },
+    {
+      "nombre": "Uncrowneds",
+      "faccion": "Alianza",
+      "nota": "archa",
+      "progreso": {"Conquista": false, "ICC 10N": false, "ICC 10H": false, "SR 25N": false, "ICC 25N": false, "SR 25H": false, "ICC 25H": false, "ARCHA 25N": false}
+    },
+    {
+      "nombre": "Abuntu",
+      "faccion": "Alianza",
+      "nota": "archa — CAPA/ESCUDO/CUELLO ICC",
+      "progreso": {"Conquista": false, "ICC 10N": false, "ICC 10H": false, "SR 25N": false, "ICC 25N": false, "SR 25H": false, "ICC 25H": false, "ARCHA 25N": false}
+    },
+    {
+      "nombre": "howtytwo",
+      "faccion": "Horda",
+      "nota": "",
+      "progreso": {"Conquista": false, "ICC 10N": false, "ICC 10H": false, "SR 25N": false, "ICC 25N": false, "SR 25H": false, "ICC 25H": false, "ARCHA 25N": false}
+    },
+    {
+      "nombre": "softpaws",
+      "faccion": "Horda",
+      "nota": "",
+      "progreso": {"Conquista": false, "ICC 10N": false, "ICC 10H": false, "SR 25N": false, "ICC 25N": false, "SR 25H": false, "ICC 25H": false, "ARCHA 25N": false}
+    },
+    {
+      "nombre": "bigsmile",
+      "faccion": "Horda",
+      "nota": "",
+      "progreso": {"Conquista": false, "ICC 10N": false, "ICC 10H": false, "SR 25N": false, "ICC 25N": false, "SR 25H": false, "ICC 25H": false, "ARCHA 25N": false}
+    },
+    {
+      "nombre": "Taffypuffqt",
+      "faccion": "Horda",
+      "nota": "",
+      "progreso": {"Conquista": false, "ICC 10N": false, "ICC 10H": false, "SR 25N": false, "ICC 25N": false, "SR 25H": false, "ICC 25H": false, "ARCHA 25N": false}
+    },
+    {
+      "nombre": "xhtml",
+      "faccion": "Horda",
+      "nota": "",
+      "progreso": {"Conquista": false, "ICC 10N": false, "ICC 10H": false, "SR 25N": false, "ICC 25N": false, "SR 25H": false, "ICC 25H": false, "ARCHA 25N": false}
+    }
+  ]
+}

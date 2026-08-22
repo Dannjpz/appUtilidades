@@ -2,6 +2,7 @@ package utilidades.modulos.finanzas.util;
 
 import utilidades.modulos.finanzas.modelo.Categoria;
 import utilidades.modulos.finanzas.modelo.Gasto;
+import utilidades.modulos.finanzas.modelo.Tarjeta;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -13,7 +14,8 @@ public class FinanzasManager {
 	private static final String FILE = "finanzas" + File.separator + "data.json";
 
 	// ── GUARDAR ───────────────────────────────────────────────
-	public static void guardar(double ingresoMensual, List<Categoria> categorias, List<Gasto> gastos) {
+	public static void guardar(double ingresoMensual, List<Categoria> categorias, List<Gasto> gastos,
+			List<Tarjeta> tarjetas) {
 		try {
 			Files.createDirectories(Path.of("finanzas"));
 			StringBuilder sb = new StringBuilder("{\n");
@@ -44,12 +46,31 @@ public class FinanzasManager {
 					sb.append(",");
 				sb.append("\n");
 			}
+			sb.append("  ],\n");
+
+			// Tarjetas
+			sb.append("  \"tarjetas\": [\n");
+			for (int i = 0; i < tarjetas.size(); i++) {
+				Tarjeta t = tarjetas.get(i);
+				sb.append("    {\"id\":\"").append(esc(t.getId())).append("\",\"nombre\":\"").append(esc(t.getNombre()))
+						.append("\",\"diaCorte\":").append(t.getDiaCorte()).append(",\"diaLimitePago\":")
+						.append(t.getDiaLimitePago()).append(",\"limiteCredito\":").append(t.getLimiteCredito())
+						.append(",\"color\":\"").append(esc(t.getColor())).append("\"}");
+				if (i < tarjetas.size() - 1)
+					sb.append(",");
+				sb.append("\n");
+			}
 			sb.append("  ]\n}\n");
 
 			Files.writeString(Path.of(FILE), sb.toString(), StandardCharsets.UTF_8);
 		} catch (IOException e) {
 			System.err.println("Error guardando finanzas: " + e.getMessage());
 		}
+	}
+
+	// Sobrecarga para compatibilidad sin tarjetas
+	public static void guardar(double ingresoMensual, List<Categoria> categorias, List<Gasto> gastos) {
+		guardar(ingresoMensual, categorias, gastos, new ArrayList<>());
 	}
 
 	// ── CARGAR ────────────────────────────────────────────────
@@ -106,6 +127,28 @@ public class FinanzasManager {
 		} catch (IOException e) {
 			return null;
 		}
+	}
+
+	public static List<Tarjeta> cargarTarjetas(String raw) {
+		List<Tarjeta> list = new ArrayList<>();
+		String sec = between(raw, "\"tarjetas\": [", "\n  ]");
+		if (sec == null)
+			return list;
+		for (String obj : objects(sec)) {
+			String id = strField(obj, "id");
+			String nom = strField(obj, "nombre");
+			int corte = (int) numField(obj, "diaCorte");
+			int pago = (int) numField(obj, "diaLimitePago");
+			double lim = numField(obj, "limiteCredito");
+			String col = strField(obj, "color");
+			if (nom == null || nom.isBlank())
+				continue;
+			Tarjeta t = new Tarjeta(nom, corte, pago, lim, col);
+			if (id != null)
+				t.setId(id);
+			list.add(t);
+		}
+		return list;
 	}
 
 	// ── JSON helpers ──────────────────────────────────────────
